@@ -189,3 +189,49 @@ bpy.ops.view3d.camera_to_view(override)
 # Simplifies to
 areas3d  = [area for area in bpy.context.window.screen.areas if area.type == 'VIEW_3D']
 bpy.ops.view3d.camera_to_view({'area':areas3d[0]})
+
+#-----------------------------------------------------------------------------
+#
+# Example of using Custom Icons (like the brush icons)
+# https://blender.stackexchange.com/questions/252366/use-new-icons-in-custom-interface/252380
+#
+# See https://devtalk.blender.org/t/how-to-get-toolbar-icons-names/6541
+#
+from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
+
+class PreviewsExamplePanel(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Previews Example Panel"
+    bl_idname = "OBJECT_PT_previews"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "object"
+    def draw(self, context):
+        layout = self.layout
+        #pcoll = icons_dict["draw"]
+        row = layout.row()
+        #my_icon = pcoll["draw"]
+        #row.operator("render.render", text="", icon_value=my_icon.icon_id)
+        icon_id = ToolSelectPanelHelper._icon_value_from_icon_handle('brush.sculpt.draw')
+        row.operator("render.render", text="", icon_value=icon_id)
+
+def register():
+    bpy.utils.register_class(PreviewsExamplePanel)
+    
+def unregister():
+    bpy.utils.unregister_class(PreviewsExamplePanel)
+
+icons = []
+
+cls = ToolSelectPanelHelper._tool_class_from_space_type('VIEW_3D')
+for item_group in cls.tools_from_context(bpy.context):
+    if type(item_group) is tuple:
+        index_current = cls._tool_group_active.get(item_group[0].idname, 0)
+        for sub_item in item_group:
+            print(sub_item.label)
+            icons.append(sub_item.icon)
+    else:
+        if item_group is not None:
+            print(item_group.label)
+            icons.append(item_group.icon)
+
