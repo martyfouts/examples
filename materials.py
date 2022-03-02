@@ -210,6 +210,7 @@ for i in range(len(ramp_colors)):
 #
 # not really materials but where else to put it?
 # set or toggle the object's shading mode
+# https://blender.stackexchange.com/questions/248476/python-how-to-toggle-smooth-shading-in-a-script/248496#248496
 def set_shading(object, OnOff=True):
     """ Set the shading mode of an object
         True means turn smooth shading on.
