@@ -235,3 +235,76 @@ for item_group in cls.tools_from_context(bpy.context):
             print(item_group.label)
             icons.append(item_group.icon)
 
+#-----------------------------------------------------------------------------
+#
+# https://blender.stackexchange.com/questions/252020/how-to-display-a-fixed-list-of-rgb-values-in-a-panel-and-when-a-color-is-clicked
+# Example of creating and using image previews as icons.
+#
+# This function is derived from code taken
+# from https://blender.stackexchange.com/a/652/42221
+def new_icon(name, red, green, blue, alpha):
+    icon_size = 32
+    icon_image = bpy.data.images.new(name, width = icon_size, height = icon_size)
+    pixels = [ None ] * icon_size * icon_size
+    for x in range(icon_size):
+        for y in range(icon_size):
+            pixels[(y * icon_size) + x] = [red, green, blue, alpha]
+    # Flatten List
+    pixels = [chan for px in pixels for chan in px]
+    icon_image.pixels = pixels
+    return icon_image
+
+palette = {
+    "Red": (1.0, 0.0, 0.0, 1.0), 
+    "Green": (0.0, 1.0, 0.0, 1.0), 
+    "Blue": (0.0, 0.0, 1.0, 1.0), 
+}
+
+def make_icons(palette):
+    icon_list = []
+    for entry in palette:
+        rgba = palette[entry]
+        new_image = new_icon(entry, rgba[0], rgba[1], rgba[2], rgba[3])
+        icon_list.append(new_image)
+    return icon_list
+
+icons = make_icons(palette)
+
+class TLA_OT_Icon(bpy.types.Operator):
+    """A button per color"""
+    bl_idname = "tla.icon"
+    bl_label = "Color"
+    bl_description = "Pick color"
+    bl_options = {'REGISTER', 'UNDO'}
+    color: bpy.props.StringProperty(name="color")
+    def execute(self, context):
+        rgba= palette[self.color]
+        self.report({'INFO'}, f"{self.color} {rgba} chosen")
+        return {'FINISHED'}
+
+# From https://blender.stackexchange.com/a/48508/42221
+class TLA_PT_Icons(bpy.types.Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "Palette"
+    bl_label = "Palette"
+    def draw(self, context):
+        layout = self.layout
+        for image in icons:
+            layout.operator("tla.icon", text="", icon_value=image.preview.icon_id).color=image.name
+        if not icons:
+            layout.label(text="No Colors in Palette")
+
+classes = [
+    TLA_OT_Icon,
+    TLA_PT_Icons,
+]
+
+def register():
+    for aclass in classes:
+        bpy.utils.register_class(aclass)
+
+
+def unregister():
+    for aclass in classes:
+        bpy.utils.unregister_class(aclass)
