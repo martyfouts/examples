@@ -34,3 +34,25 @@ points = nodes.new('GeometryNodeMeshToPoints')
 
 node_group.links.new(geom_in.outputs['Geometry'], points.inputs['Mesh'])
 node_group.links.new(points.outputs['Points'], geom_out.inputs['Geometry'])
+
+#----------------------------------------------------------------------------
+#
+# https://blender.stackexchange.com/questions/255417/create-an-object-with-a-geometry-node-modifier-via-script
+# Create an object, give it a GN modifier, but substitute a different
+# existing node tree for the default.
+# 1) Create the object
+# Replace this with code that creates the object you want.
+bpy.ops.mesh.primitive_monkey_add()
+
+# The op makes the object the active object. So use it
+object = bpy.context.active_object
+
+# 2) Add the GeometryNodes Modifier
+modifier = object.modifiers.new("GN Test", "NODES")
+
+# Locate the node tree you want to add to the modifier
+# Replace this with code to find the node tree you want to use
+replacement = bpy.data.node_groups["replacement"]
+
+# 3) Replace the modifier's node group with the replacement
+modifier.node_group = replacement
