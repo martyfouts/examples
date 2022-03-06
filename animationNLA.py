@@ -18,6 +18,7 @@ import bpy
 
 #------------------------------------------------------------------------------
 # How to create an stash actions:
+# https://blender.stackexchange.com/questions/254615/how-can-i-push-all-actions-into-nla-trough-blender-headless-with-python
 object = bpy.context.active_object
 
 # Function taken from https://devtalk.blender.org/t/context-override-for-action-stashing/7559
