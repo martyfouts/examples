@@ -56,3 +56,15 @@ replacement = bpy.data.node_groups["replacement"]
 
 # 3) Replace the modifier's node group with the replacement
 modifier.node_group = replacement
+
+#----------------------------------------------------------------------------
+#
+# https://blender.stackexchange.com/questions/256401/how-do-i-change-font-of-string-to-curves-geometry-node-using-blender-python
+# Using Ariel Black as an example.
+obj = bpy.context.active_object
+modifier = obj.modifiers["GeometryNodes"]
+node_group = modifier.node_group
+node = node_group.nodes['String to Curves']
+data_font = bpy.data.fonts.load('C:\\WINDOWS\\Fonts\\ariblk.ttf')
+node.font = data_font
+node.font
