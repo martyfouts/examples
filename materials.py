@@ -307,3 +307,31 @@ test_group.links.new(group_inputs.outputs['in_to_less'], node_less.inputs[0])
 
 #link output
 test_group.links.new(node_add.outputs[0], group_outputs.inputs['out_result'])
+
+#-----------------------------------------------------------------------------
+#
+# https://blender.stackexchange.com/questions/256447/is-their-a-way-to-merge-multiple-blend-files
+# This assumes that you really want every material and that you wont get 
+# any errors.
+# It contains both an example of linking materials (what happens in the with)
+# and of appending them (what happens in the call to wm.append)
+# It need error handling around the load.
+
+import bpy
+from pathlib import Path
+
+blendfilespath = Path("d:/stupi/blender/blends/materials samples")
+
+for file in blendfilespath.glob("*.blend") :
+    file_path = Path(file)
+    inner_path = "Materials"
+    with bpy.data.libraries.load(str(file_path)) as (data_from, data_to):
+        data_to.materials = data_from.materials
+    for linked_material in data_to.materials:
+        object_name = linked_material.name
+        bpy.ops.wm.append(
+        filepath=str(file_path / inner_path / object_name),
+        directory=str(file_path / inner_path),
+        filename=object_name
+    )
+
