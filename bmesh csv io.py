@@ -24,6 +24,8 @@ csvFilename = r'C:\tmp\monkey.csv'
 
 object = bpy.context.active_object
 assert(object.type == "MESH")
+# alternatively one could switch to edit mode via
+# bpy.ops.object.mode_set(mode='EDIT')
 if not object.mode == 'EDIT':
     bm = bmesh.new()
     bm.from_mesh(object.data)
