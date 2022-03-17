@@ -42,6 +42,10 @@ def find_nodes_by_type(material, node_type):
                     node_list.append(n)
     return node_list
 
+# More Python-ish way of writing the function
+def find_nodes_by_type(material, node_type):
+  return [node for node in material.node_tree.nodes if node.type == node_type]
+
 #------------------------------------------------------------------------------
 # display all of the material using objects in a scene and the materials they use
 material_set = set()
@@ -335,3 +339,16 @@ for file in blendfilespath.glob("*.blend") :
         filename=object_name
     )
 
+#-----------------------------------------------------------------------------
+#
+# https://blender.stackexchange.com/questions/256792/how-can-i-make-a-texture-node-single-user-with-python-the-same-way-that-is-accom
+# Now to "make single user" an image used in an image texture
+#
+material = bpy.data.materials['Material']
+node = material.node_tree.nodes['Image Texture']
+new_image = node.image.copy()
+node.image = new_image
+
+# Or relying on active choices
+node = bpy.context.active_object.material_slots[0].material.node_tree.nodes.active
+node.image = node.image.copy()
