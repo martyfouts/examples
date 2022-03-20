@@ -45,3 +45,68 @@ def displace():
 def displace(object):
     modifier = object.modifiers.new('', type='DISPLACE')
     modifier.texture = bpy.data.textures.new("displace_voronoi", 'VORONOI')
+
+#------------------------------------------------------------------------------
+#
+# hooking empties and vertices in a mesh either by parenting the empty to the
+# vertex (meaning moving the vertex moves the empty) or by adding a hook
+# modifier to the mesh and making an empty the hook target but set to a vertex
+# (Meaning moving the empty moves the vertex)
+#
+def add_empty(name, type, size, collection):
+    """ Add an empty to a collection """
+    empty = bpy.data.objects.new(name, None)
+    empty.empty_display_type = type
+    empty.empty_display_size = size
+    collection.objects.link(empty)
+    return empty
+
+def parent_empty(empty, object, vert, collection):
+    """ parent the specified empty to the specified
+        vertex of the specified object.
+        Note: Parenting will move the empty to
+        the vertex
+    """
+    empty.parent = object
+    empty.parent_type = 'VERTEX'
+    empty.parent_vertices = [vert.index] * 3
+
+def hook_empty(name, empty, object, index):
+    """ Create an empty, linked to the specified
+        collection. Add a hook to the specified
+        object hooking the specified vertex to
+        the empty.
+    """
+    hook = object.modifiers.new(
+        name=name,
+        type='HOOK'
+    )
+    hook.object = empty
+    hook.vertex_indices_set([index])
+
+collection = bpy.data.collections["Collection"]
+
+object = bpy.data.objects["Grid"]
+    
+for i in range(len(object.data.vertices)):
+    vert = object.data.vertices[i]
+    if vert.select:
+        print(f"parenting an empty to vertex {vert.index}")
+        empty = add_empty(
+            f"Parented empty_{vert.index}",
+            "SPHERE",
+            0.1,
+            collection
+        )
+        parent_empty(empty, object, vert, collection)
+        print(f"hooking an empty to vertex {vert.index}")
+        name = f"hooked empty_{vert.index}"
+        empty = add_empty(
+            name,
+            "SPHERE",
+            0.1,
+            collection
+        )
+        empty.location=object.matrix_world @ vert.co
+        bpy.context.view_layer.update()
+        hook_empty(name, empty, object, vert.index)
