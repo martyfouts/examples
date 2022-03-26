@@ -315,3 +315,23 @@ for edge in edges:
         edges_not_x.append(edge)
     else:
         edges_x.append(edge)
+
+#-----------------------------------------------------------------------------
+#
+# https://blender.stackexchange.com/questions/258626/python-how-to-make-a-new-object-out-of-selected-verts-via-bmesh
+original = bpy.context.object
+if original.mode == 'EDIT':
+    bm = bmesh.from_edit_mesh(original.data)
+else:
+    bm = bmesh.new()
+    bm.from_mesh(original.data)
+    
+bmCopy = bm.copy()
+
+meshCopy = bpy.data.meshes.new('meshCopy')
+objectCopy = bpy.data.objects.new('objectCopy', meshCopy)
+
+bmCopy.to_mesh(objectCopy.data)
+bmCopy.free()
+
+bpy.context.collection.objects.link(objectCopy)
