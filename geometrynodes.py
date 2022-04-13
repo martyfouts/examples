@@ -68,3 +68,16 @@ node = node_group.nodes['String to Curves']
 data_font = bpy.data.fonts.load('C:\\WINDOWS\\Fonts\\ariblk.ttf')
 node.font = data_font
 node.font
+
+#----------------------------------------------------------------------------
+#
+# https://blender.stackexchange.com/questions/259984/add-geometry-nodes-string-input-via-python-script
+obj = bpy.context.active_object
+node_group = obj.modifiers['GeometryNodes'].node_group
+nodes = node_group.nodes
+
+geom_out = nodes.get('Group Output')
+
+string = nodes.new('FunctionNodeInputString')
+
+node_group.links.new(string.outputs['String'], geom_out.inputs[-1])
