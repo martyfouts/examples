@@ -308,3 +308,15 @@ def register():
 def unregister():
     for aclass in classes:
         bpy.utils.unregister_class(aclass)
+
+#-----------------------------------------------------------------------------
+#
+# https://blender.stackexchange.com/questions/260067/remove-a-non-master-collection-without-deleting-objects-via-script
+collection_to_remove = bpy.data.collections.get('monkeys')
+
+objects_from_collection = [object for object in collection_to_remove.objects]
+bpy.data.collections.remove(collection_to_remove)
+
+collection_to_link_to = bpy.data.collections.get('Collection')
+for object in objects_from_collection:
+    collection_to_link_to.objects.link(object)
