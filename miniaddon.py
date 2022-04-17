@@ -32,9 +32,6 @@ bl_info = {
 import bpy
 from bpy.types import Operator
 from bpy.types import Panel
-from bpy.types import Scene
-from bpy.props import FloatVectorProperty
-
 
 class TLA_OT_operator(Operator):
     """ tooltip goes here """
