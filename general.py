@@ -320,3 +320,16 @@ bpy.data.collections.remove(collection_to_remove)
 collection_to_link_to = bpy.data.collections.get('Collection')
 for object in objects_from_collection:
     collection_to_link_to.objects.link(object)
+
+#-----------------------------------------------------------------------------
+#
+# images as planes import example
+# The magic is in the undocumented files argument. It takes a dictionary and I
+# can't find any documentation on that dictionary.
+#
+from pathlib import Path
+
+image_file = Path("c:\\tmp\\0001.png")
+bpy.ops.import_image.to_plane(files=[{'name':str(image_file)}])
+
+image = bpy.data.images[image_file.name]
