@@ -186,6 +186,20 @@ override = {
 
 bpy.ops.view3d.camera_to_view(override)
 
+#-----------------------------------------------------------------------------
+#
+# Example get override function
+def get_override(area_type, region_type):
+    for area in bpy.context.screen.areas: 
+        if area.type == area_type:             
+            for region in area.regions:                 
+                if region.type == region_type:                    
+                    override = {'area': area, 'region': region} 
+                    return override
+    raise RuntimeError("Wasn't able to find", region_type," in area ", area_type,
+                        "\n Make sure it's open while executing script.")
+
+
 # Simplifies to
 areas3d  = [area for area in bpy.context.window.screen.areas if area.type == 'VIEW_3D']
 bpy.ops.view3d.camera_to_view({'area':areas3d[0]})
