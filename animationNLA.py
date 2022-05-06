@@ -97,3 +97,36 @@ action = src_strip.action
 src_track.strips.remove(src_strip)
 new_strip = dst_track.strips.new(action.name, int(dst_track.strips[-1].frame_end+1), action)
 tracks.remove(src_track)
+
+#------------------------------------------------------------------------------
+#
+# https://blender.stackexchange.com/questions/262783/how-to-delete-a-keyframe-of-an-object-at-a-specific-frame-with-python
+#
+# oops, this deletes all of the animation data, but the OP only wanted a specific frame.
+bpy.context.scene.frame_current = 1
+object = bpy.context.active_object
+animation_data = object.animation_data
+
+if animation_data.action:
+    print(f"{object.name} has an action {animation_data.action.name}")
+    bpy.data.actions.remove(animation_data.action)
+    
+for track in animation_data.nla_tracks:
+    print(f"{object.name} has an nla track {track.name}")
+    for strip in track.strips:
+        print(f"{track.name} has a strip {strip.name} with action {strip.action.name}")
+        bpy.data.actions.remove(strip.action)
+    animation_data.nla_tracks.remove(track)
+
+# This version does what the OP asked and removes only specific keyframes
+def remove_keyframes(object, action, frame_number):
+    for curve in action.fcurves:
+        object.keyframe_delete(data_path=curve.data_path, frame=frame_number)
+
+def delete_all_keyframes(object, frame_number):
+    animation_data = object.animation_data
+    if animation_data.action:
+        remove_keyframes(object, animation_data.action, frame_number)
+    for track in animation_data.nla_tracks:
+        for strip in track.strips:
+            remove_keyframes(object, strip.action, frame_number)
