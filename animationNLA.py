@@ -147,7 +147,7 @@ override = { 'area': areas[0], 'region' : regions[0] }
 object = bpy.context.active_object
 
 # Replace this line with one that selects the NLA Track you want.
-track = object.animation_data.nla_tracks['NLaTrack']
+track = object.animation_data.nla_tracks['NlaTrack']
 
 # Replace the next two lines with ones that select the desired strips.
 # They must be adjacent.
@@ -157,3 +157,71 @@ track.strips[1].select = True
 
 # Add the transition, using the override calculated earlier.
 bpy.ops.nla.transition_add(override)
+
+
+#------------------------------------------------------------------------------
+#
+# Somewhat harder: copy a track
+# https://blender.stackexchange.com/questions/263420/create-nla-transition-with-python
+#
+# copy an NLA strip to another track
+# Generate an override that can be used for this call.
+win = bpy.context.window
+scr = win.screen
+areas  = [area for area in scr.areas if area.type == 'NLA_EDITOR']
+regions   = [region for region in areas[0].regions if region.type == 'WINDOW']
+override = { 'area': areas[0], 'region' : regions[0] }
+
+# Replace this line with one that selects the object that has the NLA Tracks
+object = bpy.context.active_object
+
+# Replace this line with one that selects the NLA Track you want.
+src_track = object.animation_data.nla_tracks['NlaTrack']
+
+dst_track =  object.animation_data.nla_tracks.new()
+dst_track.name = 'copy'
+
+# https://blender.stackexchange.com/questions/74183/how-can-i-copy-nla-tracks-from-one-armature-to-another
+# heavily adapted
+
+def strip_fill_action(newstrip, strip):
+    newstrip.name = strip.name
+    newstrip.frame_start = strip.frame_start
+    newstrip.frame_end = strip.frame_end 
+    newstrip.extrapolation = strip.extrapolation
+    newstrip.blend_type = strip.blend_type
+    newstrip.use_auto_blend = strip.use_auto_blend       
+    newstrip.blend_in = strip.blend_in
+    newstrip.blend_out= strip.blend_out            
+    newstrip.mute = strip.mute
+    newstrip.use_reverse = strip.use_reverse
+    newstrip.action_frame_start = strip.action_frame_start
+    newstrip.action_frame_end = strip.action_frame_end
+    newstrip.scale = strip.scale
+    newstrip.repeat = strip.repeat 
+    newstrip.use_animated_influence = strip.use_animated_influence
+    newstrip.influence = strip.influence            
+    newstrip.use_animated_time = strip.use_animated_time
+    newstrip.use_animated_time_cyclic = strip.use_animated_time_cyclic
+    newstrip.strip_time = strip.strip_time
+
+# Copy the action (CLIP) strips, remembering where there are transitions.
+transitions = list()
+for index, strip in enumerate(src_track.strips):
+    if strip.type == 'TRANSITION':
+        transitions.append(index)
+    elif strip.type == 'CLIP':
+        newstrip = dst_track.strips.new(strip.name, 
+                            int(strip.frame_start), strip.action)
+        strip_fill_action(newstrip, strip)
+    else:
+        print(f"Unsupported type {strip.type} at {index}")
+
+# Insert any transitions that were found.
+for index in transitions:
+    dst_track.strips[index-1].select = True
+    dst_track.strips[index].select = True
+    bpy.ops.nla.transition_add(override)
+    dst_track.strips[index-1].select = False
+    dst_track.strips[index].select = False
+   
