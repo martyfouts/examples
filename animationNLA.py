@@ -153,7 +153,7 @@ track = object.animation_data.nla_tracks['NLaTrack']
 # They must be adjacent.
 # No other strips should be selected so you may have to deselect all first.
 track.strips[0].select = True
-track.strips[0].select = True
+track.strips[1].select = True
 
 # Add the transition, using the override calculated earlier.
 bpy.ops.nla.transition_add(override)
