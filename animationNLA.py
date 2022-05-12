@@ -130,3 +130,30 @@ def delete_all_keyframes(object, frame_number):
     for track in animation_data.nla_tracks:
         for strip in track.strips:
             remove_keyframes(object, strip.action, frame_number)
+
+#------------------------------------------------------------------------------
+#
+# https://blender.stackexchange.com/questions/263420/create-nla-transition-with-python
+#
+# Add a transition between two NLA strips
+# Generate an override that can be used for this call.
+win = bpy.context.window
+scr = win.screen
+areas  = [area for area in scr.areas if area.type == 'NLA_EDITOR']
+regions   = [region for region in areas[0].regions if region.type == 'WINDOW']
+override = { 'area': areas[0], 'region' : regions[0] }
+
+# Replace this line with one that selects the object that has the NLA Tracks
+object = bpy.context.active_object
+
+# Replace this line with one that selects the NLA Track you want.
+track = object.animation_data.nla_tracks['NLaTrack']
+
+# Replace the next two lines with ones that select the desired strips.
+# They must be adjacent.
+# No other strips should be selected so you may have to deselect all first.
+track.strips[0].select = True
+track.strips[0].select = True
+
+# Add the transition, using the override calculated earlier.
+bpy.ops.nla.transition_add(override)
