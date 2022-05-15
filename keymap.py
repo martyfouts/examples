@@ -212,6 +212,21 @@ classes = [
     TLA_OT_keyhit,
 ]
 
+# Keymaps.new() is a bit misnamed, as it looks for a keymap that matches the
+# name and space type, and returns it if it exists, or creates a new one if
+# the existing one doesn't.
+#
+# This means that the unregister function will return the same keymap as
+# the register function.
+#
+# Rather than keep global state, we look for keymap items that refer to the
+# operator classes from this add-on. It's an error prone approach, but it's
+# the best available.
+#
+# It is an open question whether to delete the keymap if it is empty
+# once the last item has been removed.  For now we leave the trash
+# laying around
+
 def register():
     keymap = bpy.context.window_manager.keyconfigs.addon.keymaps.new(
         name='3D View',
