@@ -213,7 +213,10 @@ classes = [
 ]
 
 def register():
-    keymap = bpy.context.window_manager.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
+    keymap = bpy.context.window_manager.keyconfigs.addon.keymaps.new(
+        name='3D View',
+        space_type='VIEW_3D'
+    )
     keymap.keymap_items.new(
         'kmap.keyhit',
         type='W',
@@ -226,7 +229,10 @@ def register():
 def unregister():
     for c in classes:
         bpy.utils.unregister_class(c)
-    keymap = bpy.context.window_manager.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
+    keymap = bpy.context.window_manager.keyconfigs.addon.keymaps.new(
+        name='3D View',
+        space_type='VIEW_3D'
+    )
     for item in keymap.keymap_items:
         if item.idname == 'kmap.keyhit':
             keymap.keymap_items.remove(item)
