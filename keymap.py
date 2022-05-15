@@ -187,3 +187,46 @@ print_keymap_item(new_keymap_item)
 new_keymap.keymap_items.remove(new_keymap_item)
 new_keyconfig.keymaps.remove(new_keymap)
 bpy.context.window_manager.keyconfigs.remove(new_keyconfig)
+
+#-----------------------------------------------------------------------------
+# registering a shortcut for a custom operator.
+
+from bpy.types import Operator
+
+class TLA_OT_keyhit(Operator):
+    """ speak about the keymap hit """
+    bl_idname = "kmap.keyhit"
+    bl_label = "Print something"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode == "OBJECT"
+
+    def execute(self, context):
+        self.report({'INFO'},
+            f"keyhit execute()")
+        return {'FINISHED'}
+
+classes = [
+    TLA_OT_keyhit,
+]
+
+def register():
+    keymap = bpy.context.window_manager.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
+    keymap.keymap_items.new(
+        'kmap.keyhit',
+        type='W',
+        value='PRESS',
+        ctrl=True,
+    )
+    for c in classes:
+        bpy.utils.register_class(c)
+
+def unregister():
+    for c in classes:
+        bpy.utils.unregister_class(c)
+    keymap = bpy.context.window_manager.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
+    for item in keymap.keymap_items:
+        if item.idname == 'kmap.keyhit':
+            keymap.keymap_items.remove(item)
