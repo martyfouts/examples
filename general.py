@@ -103,7 +103,7 @@ def assign_cumulative_weights(raw_weights):
 
 def weighted_choice(intervals, cumulative_weights):
     """ Given a list of N tuples containing (start, end) intervals
-        and a list of cumulative weights, assigned from a monotic sequence
+        and a list of cumulative weights, assigned from a monotonic sequence
         returns a random number.  Each tuple has a chance of
         being selected from that is proportional to its weight.
     """
