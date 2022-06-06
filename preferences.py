@@ -14,10 +14,13 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 # 
 
-# Some examples of preferences in the addon section.
+# Some examples of preferences in the addon section. This can be a bit
+# confusing, because preferences can refer to the entire preferences
+# structure (https://docs.blender.org/api/current/bpy.types.Preferences.html)
+# or it can refer to an addon's preferences.
+# see (https://docs.blender.org/api/current/bpy.types.Addon.html#bpy.types.Addon)
 
 # How to add a subpanel
-
 
 #------------------------------------------------------------------------------
 
@@ -78,3 +81,8 @@ if __name__ == '__main__':
 
 
 #------------------------------------------------------------------------------
+# iterate through enabled addons using addon_utils
+
+import addon_utils
+for mod in addon_utils.modules():
+    print(mod.bl_info.get('name'), mod.bl_info.get('version', (-1, -1, -1)))
