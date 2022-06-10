@@ -206,6 +206,23 @@ bpy.ops.view3d.camera_to_view({'area':areas3d[0]})
 
 #-----------------------------------------------------------------------------
 #
+# Starting in 3.2 context overrides are deprecated in favor of temp_override
+# https://docs.blender.org/api/3.2/bpy.types.Context.html#bpy.types.Context.temp_override
+#
+# They are scheduled to be removed in 3.3
+#
+win = bpy.context.window
+scr = win.screen
+areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
+region   = [region for region in areas3d[0].regions if region.type == 'WINDOW']
+
+with bpy.context.temp_override(window=win, area=areas3d[0], region=region[0],
+    screen=scr,
+    foobar="baz"):
+    bpy.ops.view3d.camera_to_view()
+
+#-----------------------------------------------------------------------------
+#
 # Example of using Custom Icons (like the brush icons)
 # https://blender.stackexchange.com/questions/252366/use-new-icons-in-custom-interface/252380
 #
