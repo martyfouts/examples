@@ -56,3 +56,20 @@ def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
     del bpy.types.Scene.my_enum0
+
+
+#------------------------------------------------------------------------------
+# messing with viewport shading info and snapshot rendering
+# https://docs.blender.org/api/current/bpy.types.View3DShading.html
+
+win = bpy.context.window
+scr = win.screen
+areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
+space = areas3d[0].spaces[0]
+
+shading = space.shading
+shading.type='SOLID' # 'WIREFRAME' 'SOLID', 'MATERIAL', 'RENDERED'
+shading.light='MATCAP' # 'MATCAP' 'STUDIO' 'FLAT'
+shading.color_type='MATERIAL' # 'MATERIAL', 'SINGLE', 'OBJECT', 'RANDOM', 'VERTEX', 'TEXTURE'
+shading.studio_light='metal_carpaint.exr'
+bpy.ops.render.opengl()
