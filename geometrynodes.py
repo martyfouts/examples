@@ -81,3 +81,38 @@ geom_out = nodes.get('Group Output')
 string = nodes.new('FunctionNodeInputString')
 
 node_group.links.new(string.outputs['String'], geom_out.inputs[-1])
+
+#----------------------------------------------------------------------------
+#
+# https://blender.stackexchange.com/questions/249763/python-geometry-node-trees/249779#249779
+
+from mathutils import Vector
+bpy.ops.curve.primitive_bezier_curve_add()
+bpy.ops.object.modifier_add(type='NODES')  
+
+curve = bpy.context.active_object
+
+def new_GeometryNodes_group():
+    ''' Create a new empty node group that can be used
+        in a GeometryNodes modifier.
+    '''
+    node_group = bpy.data.node_groups.new('GeometryNodes', 'GeometryNodeTree')
+    inNode = node_group.nodes.new('NodeGroupInput')
+    inNode.outputs.new('NodeSocketGeometry', 'Geometry')
+    outNode = node_group.nodes.new('NodeGroupOutput')
+    outNode.inputs.new('NodeSocketGeometry', 'Geometry')
+    node_group.links.new(inNode.outputs['Geometry'], outNode.inputs['Geometry'])
+    inNode.location = Vector((-1.5*inNode.width, 0))
+    outNode.location = Vector((1.5*outNode.width, 0))
+    return node_group
+
+# In 3.2 Adding the modifier no longer automatically creates a node group.
+# This test could be done with versioning, but this approach is more general
+# in case a later version of Blender goes back to including a node group.
+if curve.modifiers[-1].node_group:
+    node_group = curve.modifiers[-1].node_group    
+else:
+    node_group = new_GeometryNodes_group()
+    curve.modifiers[-1].node_group = node_group
+
+nodes = node_group.nodes
