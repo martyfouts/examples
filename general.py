@@ -223,6 +223,22 @@ with bpy.context.temp_override(window=win, area=areas3d[0], region=region[0],
 
 #-----------------------------------------------------------------------------
 #
+# function to determine whether to use an override
+def use_temp_override():
+    ''' Determine whether Blender is 3.2 or newer and requires
+        the temp_override function, or is older and requires
+        the context override dictionary
+    '''
+    version = bpy.app.version
+    major = version[0]
+    minor = version[1]
+    if major < 3 or (major == 3 and minor < 2):
+        return False
+    else:
+        return True
+
+#-----------------------------------------------------------------------------
+#
 # Example of using Custom Icons (like the brush icons)
 # https://blender.stackexchange.com/questions/252366/use-new-icons-in-custom-interface/252380
 #
