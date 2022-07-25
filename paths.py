@@ -28,6 +28,13 @@ else:
         + f' in directory (folder) {blender_file_path.parent}')
 
 #------------------------------------------------------------------------------
+# using the above, how to save the blend file in the same directory with a new
+# name. Won't work correctly if the blend file isn't currently saved. It will
+# attempt to save the file in the CWD which is unlikely to be what is wanted.
+new_file_path = blender_file_path.parent / "newfilename.blend"
+bpy.ops.wm.save_as_mainfile(filepath=str(new_file_path))
+
+#------------------------------------------------------------------------------
 # How to add the current path to the search path for imports
 # Note that Blender does not support PYTHONPATH without the
 # --python-use-system-env flag.  (See https://developer.blender.org/D6598)
