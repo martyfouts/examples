@@ -1,5 +1,8 @@
 # Overview
 
+This repository is now deprecated. The examples apply to Blender versions 3.x.
+It has not been tested on newer versions of Blender.
+
 This is a collection of annotated examples of blender functionality.
 The files are grouped more or less by the major subject given in the file's
 name. Many of the examples come from code I wrote to answer questions on
